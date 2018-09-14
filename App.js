@@ -12,7 +12,7 @@ import {Platform, StyleSheet, View, Image, TouchableOpacity, Text } from 'react-
 import Camera from './component/index.js';
 import ResponseText from './component/ResponseText/index.js';
 import Gallery from './component/Gallery/index.js';
-import Title from './component/Title.js';
+import {Header} from 'react-native-elements';
 
 
 export default class App extends Component {
@@ -49,6 +49,13 @@ export default class App extends Component {
     // }
     return(
       <View style={{flex:1}}>
+        <Header
+          centerComponent={{ text: 'Return Today', style: { color: '#fff', fontWeight:'bold', fontSize:20}}}
+          backgroundColor="#3D6DCC"
+          elevation={4}
+          innerContainerStyles={{flexDirection: 'row', alignItems:'center'}}
+          outerContainerStyles={{height:55}}
+        />
         <View style={styles.container}>
          <Gallery />
         </View>

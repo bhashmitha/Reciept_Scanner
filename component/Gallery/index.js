@@ -42,9 +42,10 @@ export default class Gallery extends React.Component {
       },
       body: body,
     })
-    .then((Response) => {console.log(Response)
-                         this.setState({ path: false })})
-    .catch((err) => console.log(err));
+    .then(response => response.json())
+    .then(responseJson => { console.log("response",JSON.stringify(responseJson))
+    })
+    .catch(err => console.log(err));
   }
 
   pickImageHandler = () => {
@@ -66,7 +67,7 @@ export default class Gallery extends React.Component {
     return(
       <View style={styles.button}>
         
-        <Button title="Pick Image" onPress={this.pickImageHandler} />
+        <Button title="Scan Reciept" onPress={this.pickImageHandler} />
       </View>
         
              

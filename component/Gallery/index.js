@@ -1,85 +1,107 @@
-import React, {Component} from 'react';
-import { Platform, View,Text, Image, StyleSheet, Button} from 'react-native';
-import ImagePicker from "react-native-image-picker";
-import {create} from 'apisauce';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Text,
+  ActivityIndicator,
+  Image,
+  TouchableOpacity
+} from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Header} from 'react-native-elements';
+import PropTypes from "prop-types";
+import Response from './Response.json';
 
-export default class Gallery extends React.Component {
-  uploadPost = (data) => {
-    const api = create({
-      baseURL: 'https://api.taggun.io/api/receipt/v1/verbose/file',
-      headers: {
-      "Content-Type": "multipart/form-data",
-      Accept: "application/json",
-      apikey: "0c481c00a21711e8b187f3e9d1401099"
-      }
-    });
-    let apikey =  "0c481c00a21711e8b187f3e9d1401099";
-    var source = data;
-    if (Platform.OS === 'ios') {
-      // source is same
-    } else {
-      //source = 'file://' + data  
-      //source = data                 
-    }
-    var image = {
-      uri:  source,
-      type: 'image/jpeg',
-      name: 'photo',
+export default class Scan extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      Loading: true,
+      scannedData: []
     };
-
-    var body = new FormData();
-    //body.append('apikey', apikey);
-    body.append('file',image);
-    let url = 'post?api_version=1';
-    console.log(body,"hello");
-    //return api.post(api.url, body).then((res) => console.log('success:' + res.ok ));
-    fetch('https://api.taggun.io/api/receipt/v1/verbose/file', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-        apikey: "0c481c00a21711e8b187f3e9d1401099"  
-      },
-      body: body,
-    })
-    .then(response => response.json())
-    .then(responseJson => { console.log("response",JSON.stringify(responseJson))
-    })
-    .catch(err => console.log(err));
   }
 
-  pickImageHandler = () => {
-    ImagePicker.showImagePicker({title: "Scan Reciept", maxWidth: 800, maxHeight: 600}, res => {
-      if (res.didCancel) {
-        console.log("User cancelled!");
-      } else if (res.error) {
-        console.log("Error", res.error);
-      } else {
-        this.setState({
-          pickedImage: { uri: res.uri }
-        });
-        this.uploadPost(res.uri);
-      }
-    });
+  renderFooter = () => {
+    return (
+      <View style={{flex:1, flexDirection:'row'}}>
+        <View style={{flex:0.7}}>
+          <Text>SubTotal</Text>
+        </View>
+      </View>
+    );
+  }
+
+  renderHeader = () => {
+    return(
+      <View style={{flex:1, flexDirection: "row"}}>
+        <View style={{flex:0.2}}>
+          <Text style={{fontWeight:'bold'}}>Sl.no</Text>
+        </View>
+        <View style={{flex:0.6}}>
+          <Text style={{fontWeight:'bold'}}>Item</Text>
+        </View>
+        <View style={{flex:0.2}}>
+          <Text style={{fontWeight:'bold'}}>Price</Text>
+        </View>
+    </View>
+    );
+  }
+
+  renderItem = ({ item }) => {
+    console.log("item",item)
+    return (
+      <View style={{flex:1, flexDirection:'row'}}>
+        <View style={{flex:0.7}}>
+          <Text>{item.description}</Text>
+          </View>
+        <View style={{flex:0.2}}>
+          <Text>{item.data}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  componentDidMount() {
+    const response = Response.lineAmounts;
+      this.setState({
+        scannedData: response,
+        Loading: false
+      });
   }
 
   render() {
-    return(
-      <View style={styles.button}>
-        
-        <Button title="Scan Reciept" onPress={this.pickImageHandler} />
+    console.log(this.state.scannedData);
+    if (this.state.Loading) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+    return (
+      <View style={{flex: 1}}>
+        <FlatList
+          data={this.state.scannedData}
+          ListHeaderComponent = {this.renderHeader}
+          renderItem={this.renderItem}
+          ListFooterComponent={this.renderFooter}
+          style={{ flex: 1 }}
+          keyExtractor={(item, index) => index}
+        />
       </View>
-        
-             
     );
   }
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: "80%",
-    marginTop:20,
-    flexDirection:"row",
-    justifyContent: "space-around"
+  scanRow: {
+    flex: 1,
+    flexDirection: "row",
+    margin: 5,
+    borderColor: "#ccc",
+    borderBottomWidth: 0.8,
+    marginBottom:10,
+    justifyContent: "flex-end"
   }
-});
+})

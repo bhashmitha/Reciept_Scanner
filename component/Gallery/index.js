@@ -5,13 +5,16 @@ import {
   FlatList,
   Text,
   ActivityIndicator,
-  Image,
+  Dimensions,
   TouchableOpacity
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Header} from 'react-native-elements';
 import PropTypes from "prop-types";
 import Response from './Response.json';
+
+
+const deviceWidth = Dimensions.get("window").width;
 
 export default class Scan extends Component {
   constructor(props) {
@@ -24,39 +27,46 @@ export default class Scan extends Component {
 
   renderFooter = () => {
     return (
-      <View style={{flex:1, flexDirection:'row'}}>
-        <View style={{flex:0.7}}>
-          <Text>SubTotal</Text>
+      <View style={{flex:1, flexDirection:'row', padding:10}}>
+        <View style={{flex:0.8, alignItems:'center'}}>
+          <Text style={{fontSize:20,fontWeight:'bold'}}>Total</Text>
         </View>
+        <View style={{flex:0.2}}>
+          <Text>${Response.totalAmount.data}</Text>
+        </View>  
       </View>
     );
   }
 
   renderHeader = () => {
     return(
-      <View style={{flex:1, flexDirection: "row"}}>
+      <View style={styles.listHeader}>
         <View style={{flex:0.2}}>
-          <Text style={{fontWeight:'bold'}}>Sl.no</Text>
+          <Text style={{fontWeight:'bold', fontSize:20}}>Sl.no</Text>
         </View>
-        <View style={{flex:0.6}}>
-          <Text style={{fontWeight:'bold'}}>Item</Text>
+        <View style={{flex:0.6, alignItems:'center'}}>
+          <Text style={{fontWeight:'bold', fontSize:20}}>Item</Text>
         </View>
-        <View style={{flex:0.2}}>
-          <Text style={{fontWeight:'bold'}}>Price</Text>
+        <View style={{flex:0.2, alignItems:'center'}}>
+          <Text style={{fontWeight:'bold', fontSize:20}}>Price</Text>
         </View>
     </View>
     );
   }
 
   renderItem = ({ item }) => {
-    console.log("item",item)
+    const lists = item.description;
+    const splitItem = lists.split(" ");
     return (
-      <View style={{flex:1, flexDirection:'row'}}>
-        <View style={{flex:0.7}}>
-          <Text>{item.description}</Text>
-          </View>
+      <View style={styles.scanRow}>
         <View style={{flex:0.2}}>
-          <Text>{item.data}</Text>
+          <Text>{splitItem[0]}</Text>
+        </View>
+        <View style={{flex:0.6,alignItems:'center'}}>
+          <Text>{splitItem[1]}{splitItem[2]}</Text>
+        </View>
+        <View style={{flex:0.2, alignItems:'center'}}>
+          <Text>{splitItem[3]}</Text>
         </View>
       </View>
     );
@@ -86,7 +96,6 @@ export default class Scan extends Component {
           ListHeaderComponent = {this.renderHeader}
           renderItem={this.renderItem}
           ListFooterComponent={this.renderFooter}
-          style={{ flex: 1 }}
           keyExtractor={(item, index) => index}
         />
       </View>
@@ -98,10 +107,16 @@ const styles = StyleSheet.create({
   scanRow: {
     flex: 1,
     flexDirection: "row",
-    margin: 5,
     borderColor: "#ccc",
     borderBottomWidth: 0.8,
-    marginBottom:10,
-    justifyContent: "flex-end"
+    padding:15
+  },
+  listHeader: {
+    flex:1, 
+    flexDirection:'row', 
+    backgroundColor:'#b0c4de',
+    alignItems:'center',
+    height: 45,
+    padding:25
   }
 })

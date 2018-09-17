@@ -50,7 +50,7 @@ export default class App extends Component {
     return(
       <View style={{flex:1}}>
         <Header
-          centerComponent={{ text: 'Return Today', style: { color: '#fff', fontWeight:'bold', fontSize:20}}}
+          centerComponent={{ text: 'RETURN TODAY', style: { color: '#fff', fontWeight:'bold', fontSize:20}}}
           backgroundColor="#3D6DCC"
           elevation={4}
           innerContainerStyles={{flexDirection: 'row', alignItems:'center'}}

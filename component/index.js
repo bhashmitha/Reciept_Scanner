@@ -81,27 +81,47 @@ export default class Camera extends Component {
   }
   formOptions() {
     return {
-      // title: "Select Avatar",
-      // customButtons: [{ name: "fb", title: "Choose Photo from Facebook" }],
+      title: "Select Avatar",
       quality: 1.0,
       storageOptions: {
-        skipBackup: true,
-        path: "images"
+        skipBackup: true
       }
     };
   }
   chooseFromGallery() {
+    // this.props.uploadPost(
+    //   "http://whatsyourdeal.com/grocery-coupons/wp-content/uploads/2014/06/target-shorts.png"
+    // );
+
+    // this.props.uploadPost(
+    //   "https://consumerist.com/consumermediallc.files.wordpress.com/2009/05/051909-001-target-receipt-of-mystery.png%3Fw=494&h=620"
+    // );
+    // this.props.uploadPost(
+    //   "https://i0.wp.com/elkhunting.co/wp-content/uploads/2018/04/target-itunes-gift-card-lost-gift-card-but-have-receipt-target-receipt-lookup-target-receipt-lookup-gift-card-receipt-target-target-itunes-gift-card-deals.jpg?resize=646%2C1000&ssl=1"
+    // );
     const options = this.formOptions();
     ImagePicker.launchImageLibrary(options, response => {
-      // const source = { uri: "data:image/jpeg;base64," + response.data };
-      console.log(response, "Img response");
-      this.props.uploadPost(response.uri);
+      const source = { uri: "data:image/jpeg;base64," + response.data };
+      if (response.didCancel) {
+        console.log("User cancelled!");
+      } else if (response.error) {
+        console.log("Error", response.error);
+      } else {
+        console.log(response, "Img response");
+        this.props.uploadPost(response);
+      }
     });
   }
   captureImage() {
     const options = this.formOptions();
     ImagePicker.launchCamera(options, response => {
-      this.props.uploadPost(response.uri);
+      if (response.didCancel) {
+        console.log("User cancelled!");
+      } else if (response.error) {
+        console.log("Error", response.error);
+      } else {
+        this.props.uploadPost(response.uri);
+      }
     });
   }
   // takePicture = async function(camera) {

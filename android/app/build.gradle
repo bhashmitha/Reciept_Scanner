@@ -154,6 +154,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fileupload')
     compile project(':blinkid-react-native')
     compile project(':react-native-vector-icons')
     compile project(':react-native-camera')

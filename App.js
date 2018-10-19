@@ -7,11 +7,14 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  PermissionsAndroid
+  PermissionsAndroid,
+  NativeModules
 } from "react-native";
 import Camera from "./component/index.js";
 import Gallery from "./component/Gallery/index.js";
 import { Header } from "react-native-elements";
+var FileUpload = require("NativeModules").FileUpload;
+
 const API_TOKEN =
   "ZGFnMR4krQEhVU8Uh0ImiVP4mRAEK5ycyP0LAx7WXN45X3Grx1KJ9ldgGpj70Qbj";
 
@@ -31,45 +34,44 @@ export default class App extends Component {
     };
   }
 
-  uploadPost = data => {
-    console.log(data, "data");
+  uploadPost = response => {
     this.setState({ isLoading: true, status: true });
-
-    var image = {
-      // uri: "file://" + data,
-      uri: data,
-      type: "image/jpeg",
-      name: "photo"
-    };
-    console.log(image, "image##@@@@@");
-    var body = new FormData();
-    body.append("file", image);
-    fetch(`${API_URL}/${API_TOKEN}/process`, {
-      method: "POST",
+    // var dataRes = {
+    //   uri: "data:image/jpeg;base64," + response.data
+    // };
+    var obj = {
+      uploadUrl: `${API_URL}/${API_TOKEN}/process`,
+      method: "POST", // default 'POST',support 'POST' and 'PUT'
       headers: {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data"
+        Accept: "application/json"
       },
-      body: body
-    })
-      .then(res => {
-        console.log(res, "ress##@@@");
-        res.json();
-      })
-      .then(response => {
-        console.log(response, "POST response");
+      fields: {
+        hello: "world"
+      },
+      files: [
+        {
+          name: "file", // optional, if none then `filename` is used instead
+          filename: response.fileName, // require, file name
+          filepath: response.path, // require, file absoluete path
+          filetype: "image/jpeg" // options, if none, will get mimetype from `filepath` extension
+        }
+      ]
+    };
+    FileUpload.upload(obj, function(err, result) {
+      console.log("upload:", err, JSON.parse(result.data));
+      const response = JSON.parse(result.data);
+      if (response.status === "success") {
         this.setState(
           {
             token: response.token
           },
           () => this.beginPollingForProcessedDocument(response.token)
         );
-      })
-      .catch(err => console.log(err));
+      }
+    });
   };
 
   beginPollingForProcessedDocument = resToken => {
-    console.log(resToken, "resToken@@@@@");
     this.pollingInterval = setInterval(
       () => this.getReceiptInfo(resToken),
       3000

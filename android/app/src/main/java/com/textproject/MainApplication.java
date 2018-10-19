@@ -3,6 +3,7 @@ package com.textproject;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.yoloci.fileupload.FileUploadPackage;
 import com.microblink.reactnative.MicroblinkReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -24,7 +25,8 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(new MainReactPackage(), new MicroblinkReactPackage(), new VectorIconsPackage(),
+      return Arrays.<ReactPackage>asList(new MainReactPackage(),
+            new FileUploadPackage(), new MicroblinkReactPackage(), new VectorIconsPackage(),
           new RNCameraPackage(), new ImagePickerPackage());
     }
 
